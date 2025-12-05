@@ -9,8 +9,6 @@ This is Game simple and make in Python and GUI Python -->
 
 A modern, feature-rich number guessing game built with Python's Tkinter library. Test your guessing skills with multiple difficulty levels, hints, and scoring system!
 
-![Game Screenshot](https://via.placeholder.com/800x400/0a192f/64ffda?text=Ultimate+Number+Guessing+Game+Screenshot)
-
 ## ✨ Features
 
 ### 🎮 **Gameplay Features**
