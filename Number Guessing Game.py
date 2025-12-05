@@ -6,10 +6,10 @@ import time
 class NumberGuessingGame:
     def __init__(self):
         self.window = tk.Tk()
-        self.window.title("🎯 Ultimate Number Guessing Game 🎯")
-        self.window.geometry("900x700")
+        self.window.title("🎯 Number Guessing Game")
+        self.window.geometry("700x600")  # Ukuran optimal
         self.window.configure(bg='#0a192f')
-        self.window.resizable(True, True)
+        self.window.resizable(False, False)
         
         # Game variables
         self.TARGET = 0
@@ -19,7 +19,6 @@ class NumberGuessingGame:
         self.game_active = False
         self.start_time = 0
         self.best_score = 0
-        self.showing_credits = False
         
         # Color scheme
         self.colors = {
@@ -29,10 +28,7 @@ class NumberGuessingGame:
             'text': '#ccd6f6',
             'accent': '#ff6b6b',
             'success': '#4ecdc4',
-            'warning': '#ffe66d',
-            'reset': '#ff9e00',
-            'quit': '#ff4757',
-            'credits': '#9d4edd'
+            'warning': '#ffe66d'
         }
         
         self.setup_ui()
@@ -40,430 +36,333 @@ class NumberGuessingGame:
     
     def setup_ui(self):
         # Custom fonts
-        title_font = font.Font(family='Helvetica', size=28, weight='bold')
-        label_font = font.Font(family='Helvetica', size=12)
-        button_font = font.Font(family='Helvetica', size=11, weight='bold')
+        title_font = font.Font(family='Helvetica', size=22, weight='bold')
+        button_font = font.Font(family='Helvetica', size=10, weight='bold')
         
         # Header Frame
         header_frame = tk.Frame(self.window, bg=self.colors['bg'])
         header_frame.pack(pady=10)
         
-        # Title with emoji
+        # Title
         self.title_label = tk.Label(
             header_frame,
-            text="🎮 ULTIMATE NUMBER GUESSING GAME 🎮",
+            text="🎮 NUMBER GUESSING GAME",
             font=title_font,
             fg=self.colors['primary'],
             bg=self.colors['bg']
         )
         self.title_label.pack()
         
-        # Developer Credit
+        # Developer Credit - Simple
         credit_label = tk.Label(
             header_frame,
-            text="Developed by: SEND Studio",
-            font=('Helvetica', 10, 'italic'),
-            fg=self.colors['primary'],
-            bg=self.colors['bg']
-        )
-        credit_label.pack()
-        
-        # Version
-        version_label = tk.Label(
-            header_frame,
-            text="Version 1.0.0",
-            font=('Helvetica', 9),
+            text="Created by: SEND",
+            font=('Helvetica', 9, 'italic'),
             fg=self.colors['text'],
             bg=self.colors['bg']
         )
-        version_label.pack()
+        credit_label.pack()
         
         # Best Score Display
         self.best_score_label = tk.Label(
             header_frame,
             text="🏆 Best Score: 0",
-            font=('Helvetica', 12, 'bold'),
+            font=('Helvetica', 11, 'bold'),
             fg=self.colors['warning'],
             bg=self.colors['bg']
         )
         self.best_score_label.pack(pady=5)
         
         # Stats Frame
-        stats_frame = tk.Frame(self.window, bg=self.colors['secondary'], relief=tk.RAISED, bd=2)
+        stats_frame = tk.Frame(self.window, bg=self.colors['secondary'], relief=tk.RAISED, bd=1)
         stats_frame.pack(pady=10, padx=20, fill='x')
         
-        # Stats labels
         self.stats_text = tk.Label(
             stats_frame,
             text="",
-            font=('Helvetica', 11, 'bold'),
+            font=('Helvetica', 10),
             fg=self.colors['warning'],
             bg=self.colors['secondary'],
             justify=tk.LEFT
         )
         self.stats_text.pack(pady=8, padx=10)
         
-        # Game Area Frame
+        # Game Area
         game_frame = tk.Frame(self.window, bg=self.colors['bg'])
-        game_frame.pack(pady=15)
+        game_frame.pack(pady=10)
         
         # Input Frame
         input_frame = tk.Frame(game_frame, bg=self.colors['bg'])
         input_frame.pack(pady=10)
         
-        # Entry with placeholder effect
+        # Entry
         self.guessed_number = tk.StringVar()
         self.number_form = tk.Entry(
             input_frame,
             textvariable=self.guessed_number,
-            font=('Helvetica', 16, 'bold'),
-            width=15,
+            font=('Helvetica', 14),
+            width=12,
             justify='center',
-            bd=3,
+            bd=2,
             relief=tk.SUNKEN,
             bg='#1e3a5f',
-            fg=self.colors['primary'],
-            insertbackground=self.colors['primary']
+            fg=self.colors['primary']
         )
         self.number_form.pack(side=tk.LEFT, padx=5)
         
         # Guess Button
         self.guess_button = tk.Button(
             input_frame,
-            text="🚀 GUESS",
+            text="GUESS",
             font=button_font,
             command=self.play_game,
             bg=self.colors['primary'],
             fg='black',
-            activebackground='#52d1b4',
-            activeforeground='black',
-            padx=20,
-            pady=8,
-            bd=0,
+            padx=15,
+            pady=5,
             cursor='hand2',
             state='disabled'
         )
         self.guess_button.pack(side=tk.LEFT, padx=5)
         
-        # Bind Enter key
         self.number_form.bind('<Return>', lambda event: self.play_game())
         
-        # Action Buttons Frame (di tengah)
+        # Action Buttons Frame
         action_frame = tk.Frame(game_frame, bg=self.colors['bg'])
-        action_frame.pack(pady=15)
+        action_frame.pack(pady=10)
         
-        # Reset Game Button
+        # Reset Button
         self.reset_button = tk.Button(
             action_frame,
-            text="🔄 RESET GAME",
+            text="RESET",
             font=button_font,
             command=self.reset_game,
-            bg=self.colors['reset'],
+            bg='#ff9e00',
             fg='black',
-            activebackground='#e68a00',
-            activeforeground='black',
-            padx=20,
-            pady=8,
-            bd=0,
-            cursor='hand2',
-            state='normal'
+            padx=15,
+            pady=5,
+            cursor='hand2'
         )
-        self.reset_button.pack(side=tk.LEFT, padx=10)
+        self.reset_button.pack(side=tk.LEFT, padx=5)
         
-        # Quit Current Game Button
+        # Quit Game Button
         self.quit_button = tk.Button(
             action_frame,
-            text="⏹️ QUIT GAME",
+            text="QUIT GAME",
             font=button_font,
             command=self.quit_current_game,
-            bg=self.colors['quit'],
+            bg='#ff4757',
             fg='white',
-            activebackground='#ff2e43',
-            activeforeground='white',
-            padx=20,
-            pady=8,
-            bd=0,
-            cursor='hand2',
-            state='normal'
+            padx=15,
+            pady=5,
+            cursor='hand2'
         )
-        self.quit_button.pack(side=tk.LEFT, padx=10)
+        self.quit_button.pack(side=tk.LEFT, padx=5)
         
         # Credits Button
         self.credits_button = tk.Button(
             action_frame,
-            text="⭐ CREDITS",
+            text="CREDITS",
             font=button_font,
             command=self.show_credits,
-            bg=self.colors['credits'],
+            bg='#6c5ce7',
             fg='white',
-            activebackground='#8a2be2',
-            activeforeground='white',
-            padx=20,
-            pady=8,
-            bd=0,
-            cursor='hand2',
-            state='normal'
+            padx=15,
+            pady=5,
+            cursor='hand2'
         )
-        self.credits_button.pack(side=tk.LEFT, padx=10)
+        self.credits_button.pack(side=tk.LEFT, padx=5)
         
         # Result Display
-        result_frame = tk.Frame(self.window, bg=self.colors['secondary'], relief=tk.GROOVE, bd=3)
-        result_frame.pack(pady=15, padx=30, fill='both', expand=True)
+        result_frame = tk.Frame(self.window, bg=self.colors['secondary'], relief=tk.GROOVE, bd=1)
+        result_frame.pack(pady=10, padx=20, fill='both', expand=True)
         
         self.result = tk.Label(
             result_frame,
-            text="Welcome! Click 'New Game' to start!",
-            font=('Helvetica', 12),
+            text="Welcome!\nClick 'NEW GAME' to start.",
+            font=('Helvetica', 11),
             fg=self.colors['text'],
             bg=self.colors['secondary'],
-            wraplength=650,
+            wraplength=500,
             justify=tk.CENTER,
             pady=20
         )
         self.result.pack(expand=True, fill='both')
         
-        # Progress Bar Frame
-        self.progress_frame = tk.Frame(self.window, bg=self.colors['bg'])
-        self.progress_frame.pack(pady=10, padx=40, fill='x')
+        # Progress Bar
+        progress_frame = tk.Frame(self.window, bg=self.colors['bg'])
+        progress_frame.pack(pady=10, padx=20, fill='x')
         
         self.progress_label = tk.Label(
-            self.progress_frame,
+            progress_frame,
             text="Attempts: 0/10",
-            font=('Helvetica', 10),
+            font=('Helvetica', 9),
             fg=self.colors['text'],
             bg=self.colors['bg']
         )
         self.progress_label.pack()
         
         self.progress_bar = tk.Canvas(
-            self.progress_frame,
-            width=400,
-            height=15,
+            progress_frame,
+            width=300,
+            height=10,
             bg='#1e3a5f',
             highlightthickness=0
         )
         self.progress_bar.pack(pady=5)
-        self.progress_rect = self.progress_bar.create_rectangle(0, 0, 0, 15, fill=self.colors['success'], width=0)
+        self.progress_rect = self.progress_bar.create_rectangle(0, 0, 0, 10, fill=self.colors['success'])
         
-        # Control Buttons Frame (bawah)
+        # Control Buttons Frame
         control_frame = tk.Frame(self.window, bg=self.colors['bg'])
-        control_frame.pack(pady=15)
+        control_frame.pack(pady=10)
         
         # New Game Button
         self.play_button = tk.Button(
             control_frame,
-            text="🆕 NEW GAME",
+            text="NEW GAME",
             font=button_font,
             command=self.new_game,
             bg=self.colors['success'],
             fg='black',
-            activebackground='#3da89d',
-            activeforeground='black',
-            padx=25,
-            pady=10,
-            bd=0,
+            padx=20,
+            pady=8,
             cursor='hand2'
         )
-        self.play_button.pack(side=tk.LEFT, padx=10)
+        self.play_button.pack(side=tk.LEFT, padx=5)
         
         # Hint Button
         self.hint_button = tk.Button(
             control_frame,
-            text="💡 GET HINT",
+            text="HINT",
             font=button_font,
             command=self.give_hint,
-            bg='#6c5ce7',
+            bg='#9b59b6',
             fg='white',
-            activebackground='#5a4fcf',
-            activeforeground='white',
-            padx=25,
-            pady=10,
-            bd=0,
+            padx=20,
+            pady=8,
             cursor='hand2',
             state='disabled'
         )
-        self.hint_button.pack(side=tk.LEFT, padx=10)
+        self.hint_button.pack(side=tk.LEFT, padx=5)
         
-        # Exit Application Button
+        # Exit Button
         self.exit_button = tk.Button(
             control_frame,
-            text="🚪 EXIT APP",
+            text="EXIT",
             font=button_font,
             command=self.exit_game,
             bg=self.colors['accent'],
             fg='white',
-            activebackground='#e05555',
-            activeforeground='white',
-            padx=25,
-            pady=10,
-            bd=0,
+            padx=20,
+            pady=8,
             cursor='hand2'
         )
-        self.exit_button.pack(side=tk.LEFT, padx=10)
+        self.exit_button.pack(side=tk.LEFT, padx=5)
         
         # Difficulty selector
         diff_frame = tk.Frame(self.window, bg=self.colors['bg'])
-        diff_frame.pack(pady=10)
+        diff_frame.pack(pady=5)
         
         tk.Label(
             diff_frame,
             text="Difficulty:",
-            font=('Helvetica', 10),
+            font=('Helvetica', 9),
             fg=self.colors['text'],
             bg=self.colors['bg']
         ).pack(side=tk.LEFT, padx=5)
         
         self.difficulty = tk.StringVar(value="medium")
-        difficulties = [("Easy (1-50)", "easy"), ("Medium (1-100)", "medium"), ("Hard (1-200)", "hard")]
         
-        for text, mode in difficulties:
-            tk.Radiobutton(
-                diff_frame,
-                text=text,
-                variable=self.difficulty,
-                value=mode,
-                command=self.change_difficulty,
-                font=('Helvetica', 9),
-                fg=self.colors['text'],
-                bg=self.colors['bg'],
-                selectcolor=self.colors['secondary'],
-                activebackground=self.colors['bg']
-            ).pack(side=tk.LEFT, padx=5)
+        tk.Radiobutton(
+            diff_frame,
+            text="Easy (1-50)",
+            variable=self.difficulty,
+            value="easy",
+            command=self.change_difficulty,
+            font=('Helvetica', 9),
+            fg=self.colors['text'],
+            bg=self.colors['bg']
+        ).pack(side=tk.LEFT, padx=5)
         
-        # Status Bar
+        tk.Radiobutton(
+            diff_frame,
+            text="Medium (1-100)",
+            variable=self.difficulty,
+            value="medium",
+            command=self.change_difficulty,
+            font=('Helvetica', 9),
+            fg=self.colors['text'],
+            bg=self.colors['bg']
+        ).pack(side=tk.LEFT, padx=5)
+        
+        tk.Radiobutton(
+            diff_frame,
+            text="Hard (1-200)",
+            variable=self.difficulty,
+            value="hard",
+            command=self.change_difficulty,
+            font=('Helvetica', 9),
+            fg=self.colors['text'],
+            bg=self.colors['bg']
+        ).pack(side=tk.LEFT, padx=5)
+        
+        # Status Bar - Simple credit
         self.status_bar = tk.Label(
             self.window,
-            text="🎮 Ultimate Number Guessing Game - Developed by SEND Studio",
+            text="Number Guessing Game • Created by SEND",
             bd=1,
             relief=tk.SUNKEN,
             anchor=tk.W,
-            font=('Helvetica', 9),
+            font=('Helvetica', 8),
             fg=self.colors['text'],
             bg=self.colors['secondary']
         )
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
-        
-        # Splash Screen on Start
-        self.show_splash_screen()
-    
-    def show_splash_screen(self):
-        """Show splash screen with developer info"""
-        splash_text = """
-╔══════════════════════════════════════════════════════════╗
-║                                                          ║
-║      🎮 ULTIMATE NUMBER GUESSING GAME 🎮                ║
-║                                                          ║
-║                Developed by:                             ║
-║                                                          ║
-║              ███████ ███████ ███    ██ ██████           ║
-║              ██      ██      ████   ██ ██   ██          ║
-║              ███████ █████   ██ ██  ██ ██   ██          ║
-║                   ██ ██      ██  ██ ██ ██   ██          ║
-║              ███████ ███████ ██   ████ ██████           ║
-║                                                          ║
-║                    S T U D I O                           ║
-║                                                          ║
-║           Version 1.0.0 • © 2024 All Rights Reserved     ║
-║                                                          ║
-╚══════════════════════════════════════════════════════════╝
-
-Press any key or click to continue...
-        """
-        self.update_result(splash_text)
-        self.update_status("Welcome to Ultimate Number Guessing Game!")
-        
-        # Bind click or keypress to start
-        self.window.bind('<Button-1>', self.clear_splash)
-        self.window.bind('<Key>', self.clear_splash)
-    
-    def clear_splash(self, event=None):
-        """Clear splash screen"""
-        self.window.unbind('<Button-1>')
-        self.window.unbind('<Key>')
-        self.update_result("Welcome! Click 'New Game' to start!")
-        self.update_status("Ready to play!")
     
     def show_credits(self):
-        """Show game credits"""
+        """Simple credits display"""
         credits_text = """
-╔══════════════════════════════════════════════════════════╗
-║                                                          ║
-║                    🏆 GAME CREDITS 🏆                    ║
-║                                                          ║
-║  ███████╗███████╗███╗   ██╗██████╗      ██████╗███████╗ ║
-║  ██╔════╝██╔════╝████╗  ██║██╔══██╗    ██╔════╝██╔════╝ ║
-║  ███████╗█████╗  ██╔██╗ ██║██║  ██║    ██║     █████╗   ║
-║  ╚════██║██╔══╝  ██║╚██╗██║██║  ██║    ██║     ██╔══╝   ║
-║  ███████║███████╗██║ ╚████║██████╔╝    ╚██████╗███████╗ ║
-║  ╚══════╝╚══════╝╚═╝  ╚═══╝╚═════╝      ╚═════╝╚══════╝ ║
-║                                                          ║
-║                   ULTIMATE NUMBER                        ║
-║                   GUESSING GAME                          ║
-║                                                          ║
-╠══════════════════════════════════════════════════════════╣
-║                                                          ║
-║  🎮 GAME DESIGN & DEVELOPMENT:                          ║
-║     • SEND Studio                                        ║
-║     • Lead Developer: [Your Name Here]                   ║
-║                                                          ║
-║  🎨 GRAPHICS & UI DESIGN:                               ║
-║     • SEND Creative Team                                 ║
-║                                                          ║
-║  🔧 PROGRAMMING:                                        ║
-║     • Python 3                                          ║
-║     • Tkinter GUI Framework                             ║
-║                                                          ║
-║  🎵 SPECIAL THANKS TO:                                  ║
-║     • Python Community                                  ║
-║     • Tkinter Developers                                ║
-║     • All Beta Testers                                  ║
-║                                                          ║
-║  📅 RELEASE DATE:                                       ║
-║     • Version 1.0.0 - 2024                              ║
-║                                                          ║
-║  © 2024 SEND Studio. All Rights Reserved.               ║
-║                                                          ║
-║  "Creating fun experiences, one game at a time!"        ║
-║                                                          ║
-╚══════════════════════════════════════════════════════════╝
-
-Click anywhere or press any key to return to game...
+╔══════════════════════════════════════╗
+║          GAME CREDITS                ║
+╠══════════════════════════════════════╣
+║                                      ║
+║  Game: Number Guessing Game          ║
+║  Version: 1.0                        ║
+║  Created by: SEND                    ║
+║                                      ║
+║  🎮 Game Design & Development        ║
+║     • SEND                           ║
+║                                      ║
+║  🎨 UI Design                        ║
+║     • SEND                           ║
+║                                      ║
+║  🔧 Programming                      ║
+║     • Python + Tkinter               ║
+║                                      ║
+║  📅 Released: 2024                   ║
+║                                      ║
+║  Thank you for playing!              ║
+║                                      ║
+╚══════════════════════════════════════╝
         """
-        self.showing_credits = True
-        self.update_result(credits_text)
-        self.update_status("Viewing Credits - Click to return")
         
-        # Bind to return to game
-        self.window.bind('<Button-1>', self.return_from_credits)
-        self.window.bind('<Key>', self.return_from_credits)
-    
-    def return_from_credits(self, event=None):
-        """Return from credits screen"""
-        if self.showing_credits:
-            self.window.unbind('<Button-1>')
-            self.window.unbind('<Key>')
-            self.showing_credits = False
-            if self.game_active:
-                self.update_result("Game in progress! Make your next guess!")
-                self.update_status("Game resumed")
-            else:
-                self.update_result("Welcome! Click 'New Game' to start!")
-                self.update_status("Ready to play!")
+        # Show credits in messagebox
+        messagebox.showinfo("Game Credits", credits_text)
     
     def update_status(self, message):
-        """Update status bar message"""
-        self.status_bar.config(text=f"🎮 {message}")
+        """Update status bar"""
+        self.status_bar.config(text=f"Status: {message}")
     
     def update_stats(self):
         elapsed_time = time.time() - self.start_time if self.game_active else 0
-        stats = f"🎯 Score: {self.SCORE} | 🔄 Attempts: {self.RETRIES}/{self.MAX_ATTEMPTS} | ⏱️ Time: {int(elapsed_time)}s"
+        stats = f"Score: {self.SCORE} | Attempts: {self.RETRIES}/{self.MAX_ATTEMPTS} | Time: {int(elapsed_time)}s"
         self.stats_text.config(text=stats)
         
-        # Update progress bar
-        progress_width = (self.RETRIES / self.MAX_ATTEMPTS) * 400
-        self.progress_bar.coords(self.progress_rect, 0, 0, progress_width, 15)
+        # Progress bar
+        progress_width = (self.RETRIES / self.MAX_ATTEMPTS) * 300
+        self.progress_bar.coords(self.progress_rect, 0, 0, progress_width, 10)
         
-        # Change color based on attempts left
+        # Color based on attempts
         if self.RETRIES >= self.MAX_ATTEMPTS * 0.8:
             self.progress_bar.itemconfig(self.progress_rect, fill=self.colors['accent'])
         elif self.RETRIES >= self.MAX_ATTEMPTS * 0.6:
@@ -474,58 +373,43 @@ Click anywhere or press any key to return to game...
         self.progress_label.config(text=f"Attempts: {self.RETRIES}/{self.MAX_ATTEMPTS}")
     
     def new_game(self):
-        """Start a completely new game"""
         self.game_active = True
         self.RETRIES = 0
         self.SCORE = 1000
         self.start_time = time.time()
         
-        # Set range based on difficulty
+        # Set difficulty
         if self.difficulty.get() == "easy":
             self.TARGET = random.randint(1, 50)
             self.MAX_ATTEMPTS = 8
         elif self.difficulty.get() == "medium":
             self.TARGET = random.randint(1, 100)
             self.MAX_ATTEMPTS = 10
-        else:  # hard
+        else:
             self.TARGET = random.randint(1, 200)
             self.MAX_ATTEMPTS = 12
         
-        # Enable/Disable buttons
+        # Enable buttons
         self.guess_button.config(state='normal', bg=self.colors['primary'])
-        self.hint_button.config(state='normal', bg='#6c5ce7')
+        self.hint_button.config(state='normal', bg='#9b59b6')
         self.number_form.config(state='normal')
-        self.reset_button.config(state='normal', bg=self.colors['reset'])
-        self.quit_button.config(state='normal', bg=self.colors['quit'])
-        self.credits_button.config(state='normal', bg=self.colors['credits'])
         
         self.guessed_number.set("")
-        self.update_result("🎮 New Game Started! \nGuess the number! 🔢\n\n💡 Tip: Start with the middle number")
+        self.update_result("🎮 New game started!\nGuess a number between 1 and 100\n\nCreated by SEND")
         self.update_stats()
-        self.update_status("New game started! Make your first guess.")
-        
-        # Focus on entry
+        self.update_status("New game - Make your guess")
         self.number_form.focus_set()
     
     def reset_game(self):
-        """Reset current game in the middle"""
         if not self.game_active:
             return
             
-        response = messagebox.askyesno(
-            "Reset Game - SEND Studio", 
-            "Are you sure you want to reset the current game?\n\n" +
-            f"Current Attempts: {self.RETRIES}\n" +
-            f"Current Score: {self.SCORE}\n\n" +
-            "This will generate a new number but keep your settings."
-        )
-        
-        if response:
+        if messagebox.askyesno("Reset Game", "Start new game with same settings?"):
             self.RETRIES = 0
             self.SCORE = 1000
             self.start_time = time.time()
             
-            # Generate new target number
+            # New random number
             if self.difficulty.get() == "easy":
                 self.TARGET = random.randint(1, 50)
             elif self.difficulty.get() == "medium":
@@ -534,41 +418,22 @@ Click anywhere or press any key to return to game...
                 self.TARGET = random.randint(1, 200)
             
             self.guessed_number.set("")
-            self.update_result("🔄 Game Reset!\n\nNew number generated!\nMake your first guess! 🔢")
+            self.update_result("🔄 Game reset!\nNew number generated.\nGood luck!")
             self.update_stats()
-            self.update_status("Game reset! New number generated.")
-            
-            # Enable buttons if they were disabled
-            self.guess_button.config(state='normal', bg=self.colors['primary'])
-            self.hint_button.config(state='normal', bg='#6c5ce7')
-            
-            # Focus on entry
+            self.update_status("Game reset - Ready to guess")
             self.number_form.focus_set()
     
     def quit_current_game(self):
-        """Quit current game in the middle"""
         if not self.game_active:
             return
             
-        response = messagebox.askyesno(
-            "Quit Current Game - SEND Studio", 
-            "Are you sure you want to quit the current game?\n\n" +
-            f"Attempts made: {self.RETRIES}\n" +
-            f"Current Score: {self.SCORE}\n\n" +
-            "This will end the current game and you'll need to start a new one."
-        )
-        
-        if response:
+        if messagebox.askyesno("Quit Game", "Quit current game?"):
             self.end_game()
-            self.update_result(f"⏹️ Game Quit!\n\nYou quit after {self.RETRIES} attempts.\n" +
-                             f"Final Score: {self.SCORE}\n" +
-                             f"The number was: {self.TARGET}\n\n" +
-                             "Click 'New Game' to play again!")
-            self.update_status("Current game ended. Click 'New Game' to start again.")
+            self.update_result(f"Game ended.\nThe number was: {self.TARGET}\nYour score: {self.SCORE}\n\nClick 'NEW GAME' to play again!")
+            self.update_status("Game ended")
     
     def play_game(self):
         if not self.game_active:
-            self.update_status("Game not active. Start a new game first!")
             return
         
         try:
@@ -577,52 +442,44 @@ Click anywhere or press any key to return to game...
             # Validate input
             max_range = 200 if self.difficulty.get() == "hard" else 100 if self.difficulty.get() == "medium" else 50
             if choice < 1 or choice > max_range:
-                self.update_result(f"⚠️ Please enter a number between 1 and {max_range}!")
-                self.update_status(f"Invalid input! Enter number 1-{max_range}")
+                self.update_result(f"Please enter number 1-{max_range}")
                 return
                 
         except ValueError:
-            self.update_result("⚠️ Please enter a valid number!")
-            self.update_status("Invalid input! Enter a number")
+            self.update_result("Please enter a valid number")
             return
         
         self.RETRIES += 1
-        self.SCORE = max(0, self.SCORE - 50)  # Deduct points for each attempt
+        self.SCORE = max(0, self.SCORE - 50)
         
         if choice != self.TARGET:
             difference = abs(self.TARGET - choice)
             
-            # Give different hints based on how close
+            # Hot/cold hints
             if difference <= 5:
                 hint_text = "🔥 Very Hot!"
-                color = self.colors['accent']
             elif difference <= 15:
                 hint_text = "♨️ Hot!"
-                color = '#ff9966'
             elif difference <= 30:
                 hint_text = "🌤️ Warm"
-                color = '#ffcc00'
             else:
                 hint_text = "❄️ Cold"
-                color = '#6699ff'
             
             if self.TARGET < choice:
-                direction = "📉 LOWER"
+                direction = "Go LOWER 📉"
             else:
-                direction = "📈 HIGHER"
+                direction = "Go HIGHER 📈"
             
-            result = f"❌ Wrong Guess! Attempt #{self.RETRIES}\n\n"
-            result += f"{hint_text} - Go {direction}\n"
-            result += f"Difference: {difference}\n\n"
+            result = f"Wrong! Attempt #{self.RETRIES}\n\n"
+            result += f"{hint_text}\n{direction}\n\n"
             
             if self.RETRIES >= self.MAX_ATTEMPTS:
-                result += f"💔 Game Over! The number was {self.TARGET}\n"
-                result += "Click 'New Game' to try again!"
+                result += f"Game Over!\nThe number was {self.TARGET}\n\nCreated by SEND"
                 self.end_game()
-                self.update_status("Game over! Maximum attempts reached.")
+                self.update_status("Game over")
             else:
-                result += f"You have {self.MAX_ATTEMPTS - self.RETRIES} attempts left"
-                self.update_status(f"Attempt {self.RETRIES}: Wrong! Try again. {self.MAX_ATTEMPTS - self.RETRIES} attempts left.")
+                result += f"Attempts left: {self.MAX_ATTEMPTS - self.RETRIES}"
+                self.update_status(f"Wrong guess - Try again")
                 
             self.update_result(result)
             
@@ -636,98 +493,33 @@ Click anywhere or press any key to return to game...
                 self.best_score = final_score
                 self.best_score_label.config(text=f"🏆 Best Score: {self.best_score}")
             
-            # Determine performance
+            # Performance message
             if self.RETRIES <= 3:
-                performance = "🌟 LEGENDARY!"
-                developer_note = "\n\n👑 You're a true number master!"
+                performance = "🌟 Amazing!"
             elif self.RETRIES <= 5:
-                performance = "🎯 EXCELLENT!"
-                developer_note = "\n\n👍 Impressive skills!"
+                performance = "🎯 Excellent!"
             elif self.RETRIES <= 7:
-                performance = "👍 GOOD JOB!"
-                developer_note = "\n\n😊 Well played!"
+                performance = "👍 Good job!"
             else:
-                performance = "😅 FINALLY!"
-                developer_note = "\n\n💪 Persistence pays off!"
+                performance = "😅 You got it!"
             
             result = f"""
-✅ {performance} You guessed it in {self.RETRIES} {'attempt' if self.RETRIES == 1 else 'attempts'}!
+✅ {performance}
 
-⏱️ Time: {int(elapsed_time)} seconds
-🏆 Score: {final_score} 
-   (Base: {self.SCORE} + Time Bonus: {time_bonus})
+Guessed in {self.RETRIES} attempts
+Time: {int(elapsed_time)} seconds
+Score: {final_score}
 
-🎯 The number was {self.TARGET}
-{developer_note}
+🎯 Number: {self.TARGET}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━
 
-🔄 Click 'New Game' to play again!
-⭐ Check out 'CREDITS' for more info!
+Created by SEND
+Thanks for playing!
             """
             self.update_result(result)
             self.end_game()
-            self.update_status(f"Congratulations! You won with score: {final_score}!")
-            
-            # Show victory message with developer credit
-            victory_window = tk.Toplevel(self.window)
-            victory_window.title("🎉 Victory! - SEND Studio")
-            victory_window.geometry("400x300")
-            victory_window.configure(bg=self.colors['bg'])
-            victory_window.resizable(False, False)
-            
-            # Center the victory window
-            victory_window.update_idletasks()
-            width = victory_window.winfo_width()
-            height = victory_window.winfo_height()
-            x = (victory_window.winfo_screenwidth() // 2) - (width // 2)
-            y = (victory_window.winfo_screenheight() // 2) - (height // 2)
-            victory_window.geometry(f'{width}x{height}+{x}+{y}')
-            
-            # Victory message
-            tk.Label(
-                victory_window,
-                text="🎉 VICTORY! 🎉",
-                font=('Helvetica', 20, 'bold'),
-                fg=self.colors['primary'],
-                bg=self.colors['bg']
-            ).pack(pady=20)
-            
-            tk.Label(
-                victory_window,
-                text=f"You scored: {final_score} points!",
-                font=('Helvetica', 14),
-                fg=self.colors['text'],
-                bg=self.colors['bg']
-            ).pack(pady=10)
-            
-            tk.Label(
-                victory_window,
-                text="Thank you for playing!",
-                font=('Helvetica', 12),
-                fg=self.colors['warning'],
-                bg=self.colors['bg']
-            ).pack(pady=10)
-            
-            tk.Label(
-                victory_window,
-                text="Developed by SEND Studio",
-                font=('Helvetica', 10, 'italic'),
-                fg=self.colors['primary'],
-                bg=self.colors['bg']
-            ).pack(pady=20)
-            
-            # Close button
-            tk.Button(
-                victory_window,
-                text="Close",
-                font=('Helvetica', 10, 'bold'),
-                command=victory_window.destroy,
-                bg=self.colors['success'],
-                fg='black',
-                padx=20,
-                pady=5
-            ).pack(pady=10)
+            self.update_status("You won!")
         
         self.update_stats()
         self.guessed_number.set("")
@@ -735,27 +527,26 @@ Click anywhere or press any key to return to game...
     
     def give_hint(self):
         if not self.game_active or self.RETRIES == 0:
-            self.update_result("Make at least one guess to get a hint!")
-            self.update_status("Make a guess first to get a hint!")
+            self.update_result("Make a guess first!")
             return
         
-        self.SCORE = max(0, self.SCORE - 100)  # Deduct points for hint
+        self.SCORE = max(0, self.SCORE - 100)
         
         hints = [
-            f"The number is {'even' if self.TARGET % 2 == 0 else 'odd'}",
-            f"The number is between {max(1, self.TARGET-20)} and {min(200 if self.difficulty.get() == 'hard' else 100 if self.difficulty.get() == 'medium' else 50, self.TARGET+20)}",
-            f"The sum of digits is {sum(int(digit) for digit in str(self.TARGET))}",
-            f"The number is {'greater' if self.TARGET > 50 else 'less'} than 50" if self.difficulty.get() != 'easy' else "The number is in the " + ("first" if self.TARGET <= 25 else "second") + " half",
+            f"Number is {'even' if self.TARGET % 2 == 0 else 'odd'}",
+            f"Between {max(1, self.TARGET-20)} and {min(200 if self.difficulty.get() == 'hard' else 100 if self.difficulty.get() == 'medium' else 50, self.TARGET+20)}",
+            f"Sum of digits: {sum(int(d) for d in str(self.TARGET))}",
+            f"{'Greater' if self.TARGET > 50 else 'Less'} than 50" if self.difficulty.get() != 'easy' else f"In {'first' if self.TARGET <= 25 else 'second'} half",
         ]
         
         hint = random.choice(hints)
-        self.update_result(f"💡 HINT: {hint}\n\n⚠️ Score reduced by 100 points!\n\nBrought to you by SEND Studio")
-        self.update_status("Hint used! 100 points deducted.")
+        self.update_result(f"💡 Hint: {hint}\n\n-100 points")
+        self.update_status("Hint used")
         self.update_stats()
     
     def change_difficulty(self):
         if self.game_active:
-            if messagebox.askyesno("Change Difficulty - SEND Studio", "Changing difficulty will start a new game. Continue?"):
+            if messagebox.askyesno("Change Difficulty", "This will start a new game. Continue?"):
                 self.new_game()
     
     def update_result(self, text):
@@ -766,44 +557,13 @@ Click anywhere or press any key to return to game...
         self.guess_button.config(state='disabled', bg='#555555')
         self.hint_button.config(state='disabled', bg='#555555')
         self.number_form.config(state='disabled')
-        self.reset_button.config(state='disabled', bg='#555555')
-        self.quit_button.config(state='disabled', bg='#555555')
-        self.credits_button.config(state='normal', bg=self.colors['credits'])  # Keep credits enabled
     
     def exit_game(self):
-        response = messagebox.askyesno(
-            "Exit Game - SEND Studio", 
-            "Are you sure you want to exit the game?\n\n" +
-            "Thank you for playing Ultimate Number Guessing Game!\n" +
-            "Developed by SEND Studio\n\n" +
-            "Come back soon! 🎮"
-        )
-        
-        if response:
-            # Show goodbye message
-            goodbye_text = """
-╔══════════════════════════════════════════════════════════╗
-║                                                          ║
-║              Thank You For Playing!                      ║
-║                                                          ║
-║         🎮 Ultimate Number Guessing Game 🎮             ║
-║                                                          ║
-║               Developed by SEND Studio                   ║
-║                                                          ║
-║          © 2024 All Rights Reserved                      ║
-║                                                          ║
-║    "Creating fun experiences, one game at a time!"       ║
-║                                                          ║
-║                  See you next time! 👋                   ║
-║                                                          ║
-╚══════════════════════════════════════════════════════════╝
-            """
-            self.update_result(goodbye_text)
-            self.update_status("Exiting game... Thank you for playing!")
-            self.window.after(2000, self.window.destroy)  # Close after 2 seconds
+        if messagebox.askyesno("Exit", "Exit the game?\n\nCreated by SEND"):
+            self.window.destroy()
     
     def run(self):
-        # Center window on screen
+        # Center window
         self.window.update_idletasks()
         width = self.window.winfo_width()
         height = self.window.winfo_height()
@@ -815,12 +575,9 @@ Click anywhere or press any key to return to game...
 
 # Run the game
 if __name__ == "__main__":
-    print("=" * 60)
-    print("ULTIMATE NUMBER GUESSING GAME")
-    print("Developed by: SEND Studio")
-    print("Version: 1.0.0")
-    print("=" * 60)
-    print("Starting game...")
+    print("Number Guessing Game")
+    print("Created by SEND")
+    print("Starting...")
     
     game = NumberGuessingGame()
     game.run()
