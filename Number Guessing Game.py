@@ -7,7 +7,7 @@ class NumberGuessingGame:
     def __init__(self):
         self.window = tk.Tk()
         self.window.title("🎯 Ultimate Number Guessing Game 🎯")
-        self.window.geometry("850x650")
+        self.window.geometry("900x700")
         self.window.configure(bg='#0a192f')
         self.window.resizable(True, True)
         
@@ -19,6 +19,7 @@ class NumberGuessingGame:
         self.game_active = False
         self.start_time = 0
         self.best_score = 0
+        self.showing_credits = False
         
         # Color scheme
         self.colors = {
@@ -30,7 +31,8 @@ class NumberGuessingGame:
             'success': '#4ecdc4',
             'warning': '#ffe66d',
             'reset': '#ff9e00',
-            'quit': '#ff4757'
+            'quit': '#ff4757',
+            'credits': '#9d4edd'
         }
         
         self.setup_ui()
@@ -44,7 +46,7 @@ class NumberGuessingGame:
         
         # Header Frame
         header_frame = tk.Frame(self.window, bg=self.colors['bg'])
-        header_frame.pack(pady=15)
+        header_frame.pack(pady=10)
         
         # Title with emoji
         self.title_label = tk.Label(
@@ -56,15 +58,25 @@ class NumberGuessingGame:
         )
         self.title_label.pack()
         
-        # Subtitle
-        subtitle_label = tk.Label(
+        # Developer Credit
+        credit_label = tk.Label(
             header_frame,
-            text="Guess the number between 1 and 100",
-            font=('Helvetica', 14),
+            text="Developed by: SEND Studio",
+            font=('Helvetica', 10, 'italic'),
+            fg=self.colors['primary'],
+            bg=self.colors['bg']
+        )
+        credit_label.pack()
+        
+        # Version
+        version_label = tk.Label(
+            header_frame,
+            text="Version 1.0.0",
+            font=('Helvetica', 9),
             fg=self.colors['text'],
             bg=self.colors['bg']
         )
-        subtitle_label.pack(pady=5)
+        version_label.pack()
         
         # Best Score Display
         self.best_score_label = tk.Label(
@@ -111,7 +123,7 @@ class NumberGuessingGame:
             relief=tk.SUNKEN,
             bg='#1e3a5f',
             fg=self.colors['primary'],
-            insertbackground=self.colors['primary']  # Warna kursor
+            insertbackground=self.colors['primary']
         )
         self.number_form.pack(side=tk.LEFT, padx=5)
         
@@ -140,7 +152,7 @@ class NumberGuessingGame:
         action_frame = tk.Frame(game_frame, bg=self.colors['bg'])
         action_frame.pack(pady=15)
         
-        # Reset Game Button (tengah pertandingan)
+        # Reset Game Button
         self.reset_button = tk.Button(
             action_frame,
             text="🔄 RESET GAME",
@@ -158,10 +170,10 @@ class NumberGuessingGame:
         )
         self.reset_button.pack(side=tk.LEFT, padx=10)
         
-        # Quit Current Game Button (tengah pertandingan)
+        # Quit Current Game Button
         self.quit_button = tk.Button(
             action_frame,
-            text="⏹️ QUIT CURRENT GAME",
+            text="⏹️ QUIT GAME",
             font=button_font,
             command=self.quit_current_game,
             bg=self.colors['quit'],
@@ -175,6 +187,24 @@ class NumberGuessingGame:
             state='normal'
         )
         self.quit_button.pack(side=tk.LEFT, padx=10)
+        
+        # Credits Button
+        self.credits_button = tk.Button(
+            action_frame,
+            text="⭐ CREDITS",
+            font=button_font,
+            command=self.show_credits,
+            bg=self.colors['credits'],
+            fg='white',
+            activebackground='#8a2be2',
+            activeforeground='white',
+            padx=20,
+            pady=8,
+            bd=0,
+            cursor='hand2',
+            state='normal'
+        )
+        self.credits_button.pack(side=tk.LEFT, padx=10)
         
         # Result Display
         result_frame = tk.Frame(self.window, bg=self.colors['secondary'], relief=tk.GROOVE, bd=3)
@@ -303,7 +333,7 @@ class NumberGuessingGame:
         # Status Bar
         self.status_bar = tk.Label(
             self.window,
-            text="Ready to play!",
+            text="🎮 Ultimate Number Guessing Game - Developed by SEND Studio",
             bd=1,
             relief=tk.SUNKEN,
             anchor=tk.W,
@@ -312,10 +342,117 @@ class NumberGuessingGame:
             bg=self.colors['secondary']
         )
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+        
+        # Splash Screen on Start
+        self.show_splash_screen()
+    
+    def show_splash_screen(self):
+        """Show splash screen with developer info"""
+        splash_text = """
+╔══════════════════════════════════════════════════════════╗
+║                                                          ║
+║      🎮 ULTIMATE NUMBER GUESSING GAME 🎮                ║
+║                                                          ║
+║                Developed by:                             ║
+║                                                          ║
+║              ███████ ███████ ███    ██ ██████           ║
+║              ██      ██      ████   ██ ██   ██          ║
+║              ███████ █████   ██ ██  ██ ██   ██          ║
+║                   ██ ██      ██  ██ ██ ██   ██          ║
+║              ███████ ███████ ██   ████ ██████           ║
+║                                                          ║
+║                    S T U D I O                           ║
+║                                                          ║
+║           Version 1.0.0 • © 2024 All Rights Reserved     ║
+║                                                          ║
+╚══════════════════════════════════════════════════════════╝
+
+Press any key or click to continue...
+        """
+        self.update_result(splash_text)
+        self.update_status("Welcome to Ultimate Number Guessing Game!")
+        
+        # Bind click or keypress to start
+        self.window.bind('<Button-1>', self.clear_splash)
+        self.window.bind('<Key>', self.clear_splash)
+    
+    def clear_splash(self, event=None):
+        """Clear splash screen"""
+        self.window.unbind('<Button-1>')
+        self.window.unbind('<Key>')
+        self.update_result("Welcome! Click 'New Game' to start!")
+        self.update_status("Ready to play!")
+    
+    def show_credits(self):
+        """Show game credits"""
+        credits_text = """
+╔══════════════════════════════════════════════════════════╗
+║                                                          ║
+║                    🏆 GAME CREDITS 🏆                    ║
+║                                                          ║
+║  ███████╗███████╗███╗   ██╗██████╗      ██████╗███████╗ ║
+║  ██╔════╝██╔════╝████╗  ██║██╔══██╗    ██╔════╝██╔════╝ ║
+║  ███████╗█████╗  ██╔██╗ ██║██║  ██║    ██║     █████╗   ║
+║  ╚════██║██╔══╝  ██║╚██╗██║██║  ██║    ██║     ██╔══╝   ║
+║  ███████║███████╗██║ ╚████║██████╔╝    ╚██████╗███████╗ ║
+║  ╚══════╝╚══════╝╚═╝  ╚═══╝╚═════╝      ╚═════╝╚══════╝ ║
+║                                                          ║
+║                   ULTIMATE NUMBER                        ║
+║                   GUESSING GAME                          ║
+║                                                          ║
+╠══════════════════════════════════════════════════════════╣
+║                                                          ║
+║  🎮 GAME DESIGN & DEVELOPMENT:                          ║
+║     • SEND Studio                                        ║
+║     • Lead Developer: [Your Name Here]                   ║
+║                                                          ║
+║  🎨 GRAPHICS & UI DESIGN:                               ║
+║     • SEND Creative Team                                 ║
+║                                                          ║
+║  🔧 PROGRAMMING:                                        ║
+║     • Python 3                                          ║
+║     • Tkinter GUI Framework                             ║
+║                                                          ║
+║  🎵 SPECIAL THANKS TO:                                  ║
+║     • Python Community                                  ║
+║     • Tkinter Developers                                ║
+║     • All Beta Testers                                  ║
+║                                                          ║
+║  📅 RELEASE DATE:                                       ║
+║     • Version 1.0.0 - 2024                              ║
+║                                                          ║
+║  © 2024 SEND Studio. All Rights Reserved.               ║
+║                                                          ║
+║  "Creating fun experiences, one game at a time!"        ║
+║                                                          ║
+╚══════════════════════════════════════════════════════════╝
+
+Click anywhere or press any key to return to game...
+        """
+        self.showing_credits = True
+        self.update_result(credits_text)
+        self.update_status("Viewing Credits - Click to return")
+        
+        # Bind to return to game
+        self.window.bind('<Button-1>', self.return_from_credits)
+        self.window.bind('<Key>', self.return_from_credits)
+    
+    def return_from_credits(self, event=None):
+        """Return from credits screen"""
+        if self.showing_credits:
+            self.window.unbind('<Button-1>')
+            self.window.unbind('<Key>')
+            self.showing_credits = False
+            if self.game_active:
+                self.update_result("Game in progress! Make your next guess!")
+                self.update_status("Game resumed")
+            else:
+                self.update_result("Welcome! Click 'New Game' to start!")
+                self.update_status("Ready to play!")
     
     def update_status(self, message):
         """Update status bar message"""
-        self.status_bar.config(text=f"📢 {message}")
+        self.status_bar.config(text=f"🎮 {message}")
     
     def update_stats(self):
         elapsed_time = time.time() - self.start_time if self.game_active else 0
@@ -360,6 +497,7 @@ class NumberGuessingGame:
         self.number_form.config(state='normal')
         self.reset_button.config(state='normal', bg=self.colors['reset'])
         self.quit_button.config(state='normal', bg=self.colors['quit'])
+        self.credits_button.config(state='normal', bg=self.colors['credits'])
         
         self.guessed_number.set("")
         self.update_result("🎮 New Game Started! \nGuess the number! 🔢\n\n💡 Tip: Start with the middle number")
@@ -375,7 +513,7 @@ class NumberGuessingGame:
             return
             
         response = messagebox.askyesno(
-            "Reset Game", 
+            "Reset Game - SEND Studio", 
             "Are you sure you want to reset the current game?\n\n" +
             f"Current Attempts: {self.RETRIES}\n" +
             f"Current Score: {self.SCORE}\n\n" +
@@ -413,7 +551,7 @@ class NumberGuessingGame:
             return
             
         response = messagebox.askyesno(
-            "Quit Current Game", 
+            "Quit Current Game - SEND Studio", 
             "Are you sure you want to quit the current game?\n\n" +
             f"Attempts made: {self.RETRIES}\n" +
             f"Current Score: {self.SCORE}\n\n" +
@@ -500,13 +638,17 @@ class NumberGuessingGame:
             
             # Determine performance
             if self.RETRIES <= 3:
-                performance = "🌟 Legendary!"
+                performance = "🌟 LEGENDARY!"
+                developer_note = "\n\n👑 You're a true number master!"
             elif self.RETRIES <= 5:
-                performance = "🎯 Excellent!"
+                performance = "🎯 EXCELLENT!"
+                developer_note = "\n\n👍 Impressive skills!"
             elif self.RETRIES <= 7:
-                performance = "👍 Good Job!"
+                performance = "👍 GOOD JOB!"
+                developer_note = "\n\n😊 Well played!"
             else:
-                performance = "😅 Finally!"
+                performance = "😅 FINALLY!"
+                developer_note = "\n\n💪 Persistence pays off!"
             
             result = f"""
 ✅ {performance} You guessed it in {self.RETRIES} {'attempt' if self.RETRIES == 1 else 'attempts'}!
@@ -516,13 +658,76 @@ class NumberGuessingGame:
    (Base: {self.SCORE} + Time Bonus: {time_bonus})
 
 🎯 The number was {self.TARGET}
+{developer_note}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 🔄 Click 'New Game' to play again!
-"""
+⭐ Check out 'CREDITS' for more info!
+            """
             self.update_result(result)
             self.end_game()
             self.update_status(f"Congratulations! You won with score: {final_score}!")
-            messagebox.showinfo("Congratulations!", f"You won with score: {final_score}!")
+            
+            # Show victory message with developer credit
+            victory_window = tk.Toplevel(self.window)
+            victory_window.title("🎉 Victory! - SEND Studio")
+            victory_window.geometry("400x300")
+            victory_window.configure(bg=self.colors['bg'])
+            victory_window.resizable(False, False)
+            
+            # Center the victory window
+            victory_window.update_idletasks()
+            width = victory_window.winfo_width()
+            height = victory_window.winfo_height()
+            x = (victory_window.winfo_screenwidth() // 2) - (width // 2)
+            y = (victory_window.winfo_screenheight() // 2) - (height // 2)
+            victory_window.geometry(f'{width}x{height}+{x}+{y}')
+            
+            # Victory message
+            tk.Label(
+                victory_window,
+                text="🎉 VICTORY! 🎉",
+                font=('Helvetica', 20, 'bold'),
+                fg=self.colors['primary'],
+                bg=self.colors['bg']
+            ).pack(pady=20)
+            
+            tk.Label(
+                victory_window,
+                text=f"You scored: {final_score} points!",
+                font=('Helvetica', 14),
+                fg=self.colors['text'],
+                bg=self.colors['bg']
+            ).pack(pady=10)
+            
+            tk.Label(
+                victory_window,
+                text="Thank you for playing!",
+                font=('Helvetica', 12),
+                fg=self.colors['warning'],
+                bg=self.colors['bg']
+            ).pack(pady=10)
+            
+            tk.Label(
+                victory_window,
+                text="Developed by SEND Studio",
+                font=('Helvetica', 10, 'italic'),
+                fg=self.colors['primary'],
+                bg=self.colors['bg']
+            ).pack(pady=20)
+            
+            # Close button
+            tk.Button(
+                victory_window,
+                text="Close",
+                font=('Helvetica', 10, 'bold'),
+                command=victory_window.destroy,
+                bg=self.colors['success'],
+                fg='black',
+                padx=20,
+                pady=5
+            ).pack(pady=10)
         
         self.update_stats()
         self.guessed_number.set("")
@@ -544,13 +749,13 @@ class NumberGuessingGame:
         ]
         
         hint = random.choice(hints)
-        self.update_result(f"💡 HINT: {hint}\n\n⚠️ Score reduced by 100 points!")
+        self.update_result(f"💡 HINT: {hint}\n\n⚠️ Score reduced by 100 points!\n\nBrought to you by SEND Studio")
         self.update_status("Hint used! 100 points deducted.")
         self.update_stats()
     
     def change_difficulty(self):
         if self.game_active:
-            if messagebox.askyesno("Change Difficulty", "Changing difficulty will start a new game. Continue?"):
+            if messagebox.askyesno("Change Difficulty - SEND Studio", "Changing difficulty will start a new game. Continue?"):
                 self.new_game()
     
     def update_result(self, text):
@@ -563,10 +768,39 @@ class NumberGuessingGame:
         self.number_form.config(state='disabled')
         self.reset_button.config(state='disabled', bg='#555555')
         self.quit_button.config(state='disabled', bg='#555555')
+        self.credits_button.config(state='normal', bg=self.colors['credits'])  # Keep credits enabled
     
     def exit_game(self):
-        if messagebox.askyesno("Exit Game", "Are you sure you want to exit the application?"):
-            self.window.destroy()
+        response = messagebox.askyesno(
+            "Exit Game - SEND Studio", 
+            "Are you sure you want to exit the game?\n\n" +
+            "Thank you for playing Ultimate Number Guessing Game!\n" +
+            "Developed by SEND Studio\n\n" +
+            "Come back soon! 🎮"
+        )
+        
+        if response:
+            # Show goodbye message
+            goodbye_text = """
+╔══════════════════════════════════════════════════════════╗
+║                                                          ║
+║              Thank You For Playing!                      ║
+║                                                          ║
+║         🎮 Ultimate Number Guessing Game 🎮             ║
+║                                                          ║
+║               Developed by SEND Studio                   ║
+║                                                          ║
+║          © 2024 All Rights Reserved                      ║
+║                                                          ║
+║    "Creating fun experiences, one game at a time!"       ║
+║                                                          ║
+║                  See you next time! 👋                   ║
+║                                                          ║
+╚══════════════════════════════════════════════════════════╝
+            """
+            self.update_result(goodbye_text)
+            self.update_status("Exiting game... Thank you for playing!")
+            self.window.after(2000, self.window.destroy)  # Close after 2 seconds
     
     def run(self):
         # Center window on screen
@@ -581,5 +815,12 @@ class NumberGuessingGame:
 
 # Run the game
 if __name__ == "__main__":
+    print("=" * 60)
+    print("ULTIMATE NUMBER GUESSING GAME")
+    print("Developed by: SEND Studio")
+    print("Version: 1.0.0")
+    print("=" * 60)
+    print("Starting game...")
+    
     game = NumberGuessingGame()
     game.run()
